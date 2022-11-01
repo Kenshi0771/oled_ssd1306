@@ -32,7 +32,7 @@ void OledDisplay::print(const char *str)
 {
 	const font_t *font = &FONT_12x16;
 	int32_t len = strlen(str);
-	uint8_t s = (font->H + 7) / 8;
+	uint8_t s = (font->height + 7) / 8;
 
 	uint8_t bit = 0;
 	uint8_t dd1[24][len];
@@ -59,7 +59,7 @@ void OledDisplay::print(const char *str)
 		{
 			for (int j = 0; j < 24; j++)
 			{
-				dd1[j][p] = font->FONT[(Mass[p]) * font->W * s + j];
+				dd1[j][p] = font->fontPtr[(Mass[p]) * font->width * s + j];
 
 				if (j < 8)
 				{

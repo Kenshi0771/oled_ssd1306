@@ -2,10 +2,10 @@
 
 typedef struct
 {
-	const uint8_t H;
-	const uint8_t W;
-	const uint8_t COUNT_SYMBOL;
-	const uint8_t *FONT;
+	const uint8_t height;
+	const uint8_t width;
+	const uint8_t symbCount;
+	const uint8_t *fontPtr;
 } font_t;
 
 //экспортируем шрифт
