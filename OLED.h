@@ -2,6 +2,11 @@
 
 #include "IDisplay.h"
 
+
+#ifndef I2CTrans
+#define I2CTrans HAL_I2C_Master_Transmit
+#endif
+
 class OledDisplay
 {
 

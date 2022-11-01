@@ -18,14 +18,14 @@ void OledDisplay::_sendData(uint8_t data)
 	uint8_t temp[2];
 	temp[0] = 0x40;
 	temp[1] = data;
-	HAL_I2C_Master_Transmit(&hi2c1, 0x78, temp, 2, 100);
+	I2CTrans(&hi2c1, 0x78, temp, 2, 100);
 }
 void OledDisplay::_sendCmd(uint8_t cmd)
 {
 	uint8_t temp[2];
 	temp[0] = 0x00;
 	temp[1] = cmd;
-	HAL_I2C_Master_Transmit(&hi2c1, 0x78, temp, 2, 100);
+	I2CTrans(&hi2c1, 0x78, temp, 2, 100);
 }
 
 void OledDisplay::print(const char *str)
