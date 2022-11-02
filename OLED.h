@@ -13,12 +13,13 @@ class OledDisplay
 	void _init();
 	void _sendData(uint8_t data);
 	void _sendCmd(uint8_t cmd);
-
+	void _sendMultiData(uint8_t *data, uint32_t len);
 	void _setCursor(uint8_t x, uint8_t y);
 
 public:
 	OledDisplay(HAL_StatusTypeDef (*i2cTrans)(I2C_HandleTypeDef *hi2c, uint16_t devAddress, uint8_t *pData, uint16_t size, uint32_t timeout) = nullptr);
 	~OledDisplay();
+	void printSmallLine(const char *str, uint32_t lineNum);
 	void printH(const char *str);
 	void printV(const char *str);
 	void clear();

@@ -11,3 +11,4 @@ typedef struct
 //экспортируем шрифт
 extern const font_t FONT_12x16;
 
+extern const uint8_t font8x8[257][8];

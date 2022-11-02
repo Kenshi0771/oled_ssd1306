@@ -35,6 +35,15 @@ void OledDisplay::_sendData(uint8_t data)
 	temp[1] = data;
 	_i2cTrans(&hi2c1, 0x78, temp, 2, 100);
 }
+
+void OledDisplay::_sendMultiData(uint8_t *data, uint32_t len)
+{
+	uint8_t temp[len + 1];
+	temp[0] = 0x40;
+	memcpy(temp + 1, data, len);
+	_i2cTrans(&hi2c1, 0x78, temp, len + 1, 100);
+}
+
 void OledDisplay::_sendCmd(uint8_t cmd)
 {
 	uint8_t temp[2];
@@ -42,6 +51,38 @@ void OledDisplay::_sendCmd(uint8_t cmd)
 	temp[1] = cmd;
 	_i2cTrans(&hi2c1, 0x78, temp, 2, 100);
 }
+
+void OledDisplay::printSmallLine(const char *str, uint32_t lineNum)
+{
+	const font_t *font = &FONT_12x16;
+	uint32_t len = strlen(str);
+
+	uint8_t tmp[_OLED_WIDTH];
+	memset(tmp, 0, sizeof(tmp));
+
+	if (lineNum)
+		_setCursor(0, 1);
+	else
+		_setCursor(0, 0);
+
+	uint32_t k = 0;
+	for (uint32_t i = 0; i < len; i++)
+	{
+		uint8_t *data = (uint8_t*)&font8x8[(int)str[i]][0];
+		for (uint32_t j = 0; j < 8; j++)
+		{
+			tmp[k] = reveseByte(data[j]);
+			k++;
+			if(k >= sizeof(tmp))
+				break;
+		}
+
+	}
+
+	_sendMultiData(tmp, sizeof(tmp));
+
+}
+
 
 void OledDisplay::printH(const char *str)
 {
