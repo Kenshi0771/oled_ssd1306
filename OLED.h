@@ -1,15 +1,11 @@
 #pragma once
 
 #include "IDisplay.h"
-
-
-#ifndef I2CTrans
-#define I2CTrans HAL_I2C_Master_Transmit
-#endif
+#include "i2c.h"
 
 class OledDisplay
 {
-
+	HAL_StatusTypeDef (*_i2cTrans)(I2C_HandleTypeDef *hi2c, uint16_t devAddress, uint8_t *pData, uint16_t size, uint32_t timeout);
 	const uint16_t _OLED_WIDTH = 98;
 	const uint16_t _OLED_HEIGHT = 16;
 	const uint16_t _OLED_BUFFERSIZE = (_OLED_WIDTH * _OLED_HEIGHT) / 8;
@@ -21,9 +17,10 @@ class OledDisplay
 	void _setCursor(uint8_t x, uint8_t y);
 
 public:
-	OledDisplay();
+	OledDisplay(HAL_StatusTypeDef (*i2cTrans)(I2C_HandleTypeDef *hi2c, uint16_t devAddress, uint8_t *pData, uint16_t size, uint32_t timeout) = nullptr);
 	~OledDisplay();
-	void print(const char *str);
+	void printH(const char *str);
+	void printV(const char *str);
 	void clear();
 	void fill();
 };

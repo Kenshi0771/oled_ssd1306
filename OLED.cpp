@@ -1,11 +1,26 @@
 #include "OLED.h"
-#include "i2c.h"
 #include "string.h"
 
 #include "fonts/font.h"
-OledDisplay::OledDisplay()
-{
 
+
+
+uint8_t reveseByte(uint8_t byte)
+{
+	uint8_t res;
+	for (int i = 0; i < 8; i++)
+	{
+		res = res << 1;
+		res += byte % 2;
+		byte = byte >> 1;
+	}
+	return res;
+}
+
+OledDisplay::OledDisplay(HAL_StatusTypeDef (*_i2cTrans)(I2C_HandleTypeDef *hi2c, uint16_t devAddress, uint8_t *pData, uint16_t size, uint32_t timeout)) : _i2cTrans(_i2cTrans)
+{
+	_init();
+	fill();
 }
 
 OledDisplay::~OledDisplay()
@@ -18,17 +33,56 @@ void OledDisplay::_sendData(uint8_t data)
 	uint8_t temp[2];
 	temp[0] = 0x40;
 	temp[1] = data;
-	I2CTrans(&hi2c1, 0x78, temp, 2, 100);
+	_i2cTrans(&hi2c1, 0x78, temp, 2, 100);
 }
 void OledDisplay::_sendCmd(uint8_t cmd)
 {
 	uint8_t temp[2];
 	temp[0] = 0x00;
 	temp[1] = cmd;
-	I2CTrans(&hi2c1, 0x78, temp, 2, 100);
+	_i2cTrans(&hi2c1, 0x78, temp, 2, 100);
 }
 
-void OledDisplay::print(const char *str)
+void OledDisplay::printH(const char *str)
+{
+	const font_t *font = &FONT_12x16;
+	uint32_t len = strlen(str);
+
+	uint32_t fillLen = _OLED_WIDTH - len * font->width;
+
+	_setCursor(0, 1);
+	for (uint32_t i = 0; i < len; i++)
+	{
+		uint8_t *data = (uint8_t*)&font->fontPtr[font->width * 2 * str[i]];
+		for (uint32_t j = 0; j < font->width; j++)
+		{
+			_sendData(reveseByte(data[j]));
+		}
+
+	}
+
+	for (uint32_t i = 0; i < fillLen; i++)
+	{
+		_sendData(0);
+	}
+
+	_setCursor(0, 0);
+	for (uint32_t i = 0; i < len; i++)
+	{
+		uint8_t *data = (uint8_t*)&font->fontPtr[font->width * 2 * str[i]];
+		for (uint32_t j = font->width; j < 2 * font->width; j++)
+		{
+			_sendData(reveseByte(data[j]));
+		}
+	}
+
+	for (uint32_t i = 0; i < fillLen; i++)
+	{
+		_sendData(0);
+	}
+}
+
+void OledDisplay::printV(const char *str)
 {
 	const font_t *font = &FONT_12x16;
 	int32_t len = strlen(str);
