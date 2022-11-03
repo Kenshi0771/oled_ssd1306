@@ -17,7 +17,7 @@ uint8_t reveseByte(uint8_t byte)
 	return res;
 }
 
-OledDisplay::OledDisplay(HAL_StatusTypeDef (*_i2cTrans)(I2C_HandleTypeDef *hi2c, uint16_t devAddress, uint8_t *pData, uint16_t size, uint32_t timeout)) : _i2cTrans(i2cTrans)
+OledDisplay::OledDisplay(bool (*i2cTrans)(uint16_t devAddress, uint8_t *pData, uint16_t size, uint32_t timeout)) : _i2cTrans(i2cTrans)
 {
 	_init();
 	fill();
@@ -33,7 +33,7 @@ void OledDisplay::_sendData(uint8_t data)
 	uint8_t temp[2];
 	temp[0] = 0x40;
 	temp[1] = data;
-	_i2cTrans(&hi2c1, 0x78, temp, 2, 100);
+	_i2cTrans(0x3C, temp, 2, 100);
 }
 
 void OledDisplay::_sendMultiData(uint8_t *data, uint32_t len)
@@ -41,7 +41,7 @@ void OledDisplay::_sendMultiData(uint8_t *data, uint32_t len)
 	uint8_t temp[len + 1];
 	temp[0] = 0x40;
 	memcpy(temp + 1, data, len);
-	_i2cTrans(&hi2c1, 0x78, temp, len + 1, 100);
+	_i2cTrans(0x3C, temp, len + 1, 100);
 }
 
 void OledDisplay::_sendCmd(uint8_t cmd)
@@ -49,7 +49,7 @@ void OledDisplay::_sendCmd(uint8_t cmd)
 	uint8_t temp[2];
 	temp[0] = 0x00;
 	temp[1] = cmd;
-	_i2cTrans(&hi2c1, 0x78, temp, 2, 100);
+	_i2cTrans(0x3C, temp, 2, 100);
 }
 
 void OledDisplay::printSmallLine(const char *str, uint32_t lineNum)
