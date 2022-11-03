@@ -17,7 +17,7 @@ uint8_t reveseByte(uint8_t byte)
 	return res;
 }
 
-OledDisplay::OledDisplay(HAL_StatusTypeDef (*_i2cTrans)(I2C_HandleTypeDef *hi2c, uint16_t devAddress, uint8_t *pData, uint16_t size, uint32_t timeout)) : _i2cTrans(_i2cTrans)
+OledDisplay::OledDisplay(HAL_StatusTypeDef (*_i2cTrans)(I2C_HandleTypeDef *hi2c, uint16_t devAddress, uint8_t *pData, uint16_t size, uint32_t timeout)) : _i2cTrans(i2cTrans)
 {
 	_init();
 	fill();
